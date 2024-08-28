@@ -330,6 +330,7 @@ public class ConfigurationMetadataAnnotationProcessor extends AbstractProcessor 
 
 	protected ConfigurationMetadata writeMetadata() throws Exception {
 		ConfigurationMetadata metadata = this.metadataCollector.getMetadata();
+		// 合并META-INF/additional-spring-configuration-metadata.json
 		metadata = mergeAdditionalMetadata(metadata);
 		if (!metadata.getItems().isEmpty()) {
 			this.metadataStore.writeMetadata(metadata);

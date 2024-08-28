@@ -150,6 +150,7 @@ public class JarFile extends AbstractJarFile implements Iterable<java.util.jar.J
 			throw ex;
 		}
 		this.manifestSupplier = (manifestSupplier != null) ? manifestSupplier : () -> {
+			// 获取META-INF/MANIFEST.MF下的清单
 			try (InputStream inputStream = getInputStream(MANIFEST_NAME)) {
 				if (inputStream == null) {
 					return null;
@@ -431,6 +432,7 @@ public class JarFile extends AbstractJarFile implements Iterable<java.util.jar.J
 	 */
 	public static void registerUrlProtocolHandler() {
 		Handler.captureJarContextUrl();
+		// 指定JarFile的包名
 		String handlers = System.getProperty(PROTOCOL_HANDLER, "");
 		System.setProperty(PROTOCOL_HANDLER,
 				((handlers == null || handlers.isEmpty()) ? HANDLERS_PACKAGE : handlers + "|" + HANDLERS_PACKAGE));

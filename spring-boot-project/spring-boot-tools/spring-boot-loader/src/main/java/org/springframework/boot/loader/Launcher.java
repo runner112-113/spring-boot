@@ -149,9 +149,13 @@ public abstract class Launcher {
 	}
 
 	protected final Archive createArchive() throws Exception {
+		// 获取当前类的保护域
 		ProtectionDomain protectionDomain = getClass().getProtectionDomain();
+		// 从保护域中获取代码源
 		CodeSource codeSource = protectionDomain.getCodeSource();
+		// 获取代码源的位置URI(代码源包含了类的字节码来源的URL)
 		URI location = (codeSource != null) ? codeSource.getLocation().toURI() : null;
+		// 获取位置URI的具体路径部分
 		String path = (location != null) ? location.getSchemeSpecificPart() : null;
 		if (path == null) {
 			throw new IllegalStateException("Unable to determine code source archive");
