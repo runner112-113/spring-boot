@@ -184,6 +184,7 @@ public final class DataSourceBuilder<T extends DataSource> {
 				applied.add(property);
 			}
 		}
+		// driverClassName没指定的情况下，尝试从url获取
 		if (!applied.contains(DataSourceProperty.DRIVER_CLASS_NAME)
 				&& properties.canSet(DataSourceProperty.DRIVER_CLASS_NAME)
 				&& this.values.containsKey(DataSourceProperty.URL)) {
