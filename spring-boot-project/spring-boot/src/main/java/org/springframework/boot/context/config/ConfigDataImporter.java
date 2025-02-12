@@ -83,7 +83,9 @@ class ConfigDataImporter {
 			List<ConfigDataLocation> locations) {
 		try {
 			Profiles profiles = (activationContext != null) ? activationContext.getProfiles() : null;
+			// 解析当前ConfigDataEnvironmentContributor的所有locations
 			List<ConfigDataResolutionResult> resolved = resolve(locationResolverContext, profiles, locations);
+			// 将ConfigDataResource准换为ConfigData
 			return load(loaderContext, resolved);
 		}
 		catch (IOException ex) {
@@ -94,6 +96,7 @@ class ConfigDataImporter {
 	private List<ConfigDataResolutionResult> resolve(ConfigDataLocationResolverContext locationResolverContext,
 			Profiles profiles, List<ConfigDataLocation> locations) {
 		List<ConfigDataResolutionResult> resolved = new ArrayList<>(locations.size());
+		// 遍历每个ConfigDataLocation 进行解析
 		for (ConfigDataLocation location : locations) {
 			resolved.addAll(resolve(locationResolverContext, profiles, location));
 		}
@@ -114,6 +117,7 @@ class ConfigDataImporter {
 	private Map<ConfigDataResolutionResult, ConfigData> load(ConfigDataLoaderContext loaderContext,
 			List<ConfigDataResolutionResult> candidates) throws IOException {
 		Map<ConfigDataResolutionResult, ConfigData> result = new LinkedHashMap<>();
+		// 遍历所有的ConfigDataResolutionResult
 		for (int i = candidates.size() - 1; i >= 0; i--) {
 			ConfigDataResolutionResult candidate = candidates.get(i);
 			ConfigDataLocation location = candidate.getLocation();
@@ -129,6 +133,7 @@ class ConfigDataImporter {
 			}
 			else {
 				try {
+					// load resource to ConfigData
 					ConfigData loaded = this.loaders.load(loaderContext, resource);
 					if (loaded != null) {
 						this.logger.trace(LogMessage.format("Loaded resource %s from location %s", resource, location));

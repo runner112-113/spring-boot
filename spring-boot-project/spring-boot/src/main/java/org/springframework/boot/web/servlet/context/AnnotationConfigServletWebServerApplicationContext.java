@@ -85,6 +85,7 @@ public class AnnotationConfigServletWebServerApplicationContext extends ServletW
 	 */
 	public AnnotationConfigServletWebServerApplicationContext(DefaultListableBeanFactory beanFactory) {
 		super(beanFactory);
+		// 会注入CommonAnnotationBeanPostProcessor、AutowiredAnnotationBeanPostProcessor等
 		this.reader = new AnnotatedBeanDefinitionReader(this);
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}

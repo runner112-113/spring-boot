@@ -136,8 +136,11 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 */
 	@Override
 	protected void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) {
+		// 处理ServletContextAware、ServletConfigAware
 		beanFactory.addBeanPostProcessor(new WebApplicationContextServletContextAwareProcessor(this));
 		beanFactory.ignoreDependencyInterface(ServletContextAware.class);
+		// 注册request、session、application等scope
+		// 以及ResolvableDependency：ServletRequest、ServletResponse、HttpSession、WebRequest
 		registerWebApplicationScopes();
 	}
 
@@ -159,6 +162,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	protected void onRefresh() {
 		super.onRefresh();
 		try {
+			// 创建web server
 			createWebServer();
 		}
 		catch (Throwable ex) {
@@ -225,6 +229,7 @@ public class ServletWebServerApplicationContext extends GenericWebApplicationCon
 	 * @return the self initializer
 	 * @see #prepareWebApplicationContext(ServletContext)
 	 */
+	// lambda：当执行ServletContextInitializer.onStartup时会执行 this::selfInitialize
 	private org.springframework.boot.web.servlet.ServletContextInitializer getSelfInitializer() {
 		return this::selfInitialize;
 	}

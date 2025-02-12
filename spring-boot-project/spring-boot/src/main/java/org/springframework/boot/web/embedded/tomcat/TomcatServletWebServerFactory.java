@@ -197,6 +197,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		for (LifecycleListener listener : this.serverLifecycleListeners) {
 			tomcat.getServer().addLifecycleListener(listener);
 		}
+		// 创建连接器
 		Connector connector = new Connector(this.protocol);
 		connector.setThrowOnFailure(true);
 		tomcat.getService().addConnector(connector);
@@ -330,6 +331,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		if (connector.getProtocolHandler() instanceof AbstractProtocol) {
 			customizeProtocol((AbstractProtocol<?>) connector.getProtocolHandler());
 		}
+		// 回调TomcatProtocolHandlerCustomizer
 		invokeProtocolHandlerCustomizers(connector.getProtocolHandler());
 		if (getUriEncoding() != null) {
 			connector.setURIEncoding(getUriEncoding().name());
@@ -344,6 +346,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		}
 		TomcatConnectorCustomizer compression = new CompressionConnectorCustomizer(getCompression());
 		compression.customize(connector);
+		// 回调TomcatConnectorCustomizer
 		for (TomcatConnectorCustomizer customizer : this.tomcatConnectorCustomizers) {
 			customizer.customize(connector);
 		}
@@ -378,6 +381,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 			embeddedContext.setStarter(starter);
 			embeddedContext.setFailCtxIfServletStartFails(true);
 		}
+		// 添加ServletContainerInitializer到Tomcat的ServletContext
 		context.addServletContainerInitializer(starter, NO_CLASSES);
 		for (LifecycleListener lifecycleListener : this.contextLifecycleListeners) {
 			context.addLifecycleListener(lifecycleListener);
@@ -401,6 +405,7 @@ public class TomcatServletWebServerFactory extends AbstractServletWebServerFacto
 		for (String webListenerClassName : getWebListenerClassNames()) {
 			context.addApplicationListener(webListenerClassName);
 		}
+		// TomcatContextCustomizer callback
 		for (TomcatContextCustomizer customizer : this.tomcatContextCustomizers) {
 			customizer.customize(context);
 		}

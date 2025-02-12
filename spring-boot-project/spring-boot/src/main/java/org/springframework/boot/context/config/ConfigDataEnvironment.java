@@ -113,12 +113,14 @@ class ConfigDataEnvironment {
 
 	private final ConfigurableEnvironment environment;
 
+	// 从spring.factories加载：ConfigTreeConfigDataLocationResolver、StandardConfigDataLocationResolver
 	private final ConfigDataLocationResolvers resolvers;
 
 	private final Collection<String> additionalProfiles;
 
 	private final ConfigDataEnvironmentUpdateListener environmentUpdateListener;
 
+	// 从spring.factories加载：ConfigTreeConfigDataLoader、StandardConfigDataLoader
 	private final ConfigDataLoaders loaders;
 
 	private final ConfigDataEnvironmentContributors contributors;
@@ -137,6 +139,7 @@ class ConfigDataEnvironment {
 	ConfigDataEnvironment(DeferredLogFactory logFactory, ConfigurableBootstrapContext bootstrapContext,
 			ConfigurableEnvironment environment, ResourceLoader resourceLoader, Collection<String> additionalProfiles,
 			ConfigDataEnvironmentUpdateListener environmentUpdateListener) {
+		// binder environment
 		Binder binder = Binder.get(environment);
 		UseLegacyConfigProcessingException.throwIfRequested(binder);
 		this.logFactory = logFactory;
@@ -163,6 +166,7 @@ class ConfigDataEnvironment {
 		MutablePropertySources propertySources = this.environment.getPropertySources();
 		List<ConfigDataEnvironmentContributor> contributors = new ArrayList<>(propertySources.size() + 10);
 		PropertySource<?> defaultPropertySource = null;
+		// 标记Environment中已有的MutablePropertySources为Existing的ConfigDataEnvironmentContributor
 		for (PropertySource<?> propertySource : propertySources) {
 			if (DefaultPropertiesPropertySource.hasMatchingName(propertySource)) {
 				defaultPropertySource = propertySource;
@@ -170,9 +174,14 @@ class ConfigDataEnvironment {
 			else {
 				this.logger.trace(LogMessage.format("Creating wrapped config data contributor for '%s'",
 						propertySource.getName()));
+				// 已经存在的
 				contributors.add(ConfigDataEnvironmentContributor.ofExisting(propertySource));
 			}
 		}
+		// 添加其他的ConfigDataEnvironmentContributor
+		// spring.config.import
+		// spring.config.additional-location
+		// spring.config.location
 		contributors.addAll(getInitialImportContributors(binder));
 		if (defaultPropertySource != null) {
 			this.logger.trace("Creating wrapped config data contributor for default property source");
@@ -192,9 +201,15 @@ class ConfigDataEnvironment {
 
 	private List<ConfigDataEnvironmentContributor> getInitialImportContributors(Binder binder) {
 		List<ConfigDataEnvironmentContributor> initialContributors = new ArrayList<>();
+		// 从environment中获取spring.config.import属性值
+		// 并将其标记为Kind.INITIAL_IMPORT，然后添加到initialContributors
 		addInitialImportContributors(initialContributors, bindLocations(binder, IMPORT_PROPERTY, EMPTY_LOCATIONS));
+		// 从environment中获取spring.config.additional-location属性值
+		// 并将其标记为Kind.INITIAL_IMPORT，然后添加到initialContributors
 		addInitialImportContributors(initialContributors,
 				bindLocations(binder, ADDITIONAL_LOCATION_PROPERTY, EMPTY_LOCATIONS));
+		// 从environment中获取spring.config.location属性值
+		// 并将其标记为Kind.INITIAL_IMPORT，然后添加到initialContributors
 		addInitialImportContributors(initialContributors,
 				bindLocations(binder, LOCATION_PROPERTY, DEFAULT_SEARCH_LOCATIONS));
 		return initialContributors;

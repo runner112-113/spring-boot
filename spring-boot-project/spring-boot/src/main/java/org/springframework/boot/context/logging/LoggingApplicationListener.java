@@ -220,6 +220,7 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 			onApplicationStartingEvent((ApplicationStartingEvent) event);
 		}
 		else if (event instanceof ApplicationEnvironmentPreparedEvent) {
+			// 日志配置文件的加载
 			onApplicationEnvironmentPreparedEvent((ApplicationEnvironmentPreparedEvent) event);
 		}
 		else if (event instanceof ApplicationPreparedEvent) {
@@ -249,12 +250,15 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 	private void onApplicationPreparedEvent(ApplicationPreparedEvent event) {
 		ConfigurableApplicationContext applicationContext = event.getApplicationContext();
 		ConfigurableListableBeanFactory beanFactory = applicationContext.getBeanFactory();
+		// 注册LoggingSystem(springBootLoggingSystem)
 		if (!beanFactory.containsBean(LOGGING_SYSTEM_BEAN_NAME)) {
 			beanFactory.registerSingleton(LOGGING_SYSTEM_BEAN_NAME, this.loggingSystem);
 		}
+		// 注册LogFile(springBootLogFile)
 		if (this.logFile != null && !beanFactory.containsBean(LOG_FILE_BEAN_NAME)) {
 			beanFactory.registerSingleton(LOG_FILE_BEAN_NAME, this.logFile);
 		}
+		// 注册LoggerGroups(springBootLoggerGroups)
 		if (this.loggerGroups != null && !beanFactory.containsBean(LOGGER_GROUPS_BEAN_NAME)) {
 			beanFactory.registerSingleton(LOGGER_GROUPS_BEAN_NAME, this.loggerGroups);
 		}
@@ -288,6 +292,7 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 	 * @param classLoader the classloader
 	 */
 	protected void initialize(ConfigurableEnvironment environment, ClassLoader classLoader) {
+		// 应用env的配置
 		getLoggingSystemProperties(environment).apply();
 		this.logFile = LogFile.get(environment);
 		if (this.logFile != null) {
@@ -295,6 +300,7 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 		}
 		this.loggerGroups = new LoggerGroups(DEFAULT_GROUP_LOGGERS);
 		initializeEarlyLoggingLevel(environment);
+		// 加载指定配置
 		initializeSystem(environment, this.loggingSystem, this.logFile);
 		initializeFinalLoggingLevels(environment, this.loggingSystem);
 		registerShutdownHookIfNecessary(environment, this.loggingSystem);
@@ -325,10 +331,12 @@ public class LoggingApplicationListener implements GenericApplicationListener {
 		String logConfig = StringUtils.trimWhitespace(environment.getProperty(CONFIG_PROPERTY));
 		try {
 			LoggingInitializationContext initializationContext = new LoggingInitializationContext(environment);
+			// 是都忽略日志配置文件
 			if (ignoreLogConfig(logConfig)) {
 				system.initialize(initializationContext, null, logFile);
 			}
 			else {
+				// 指定了日志配置文件
 				system.initialize(initializationContext, logConfig, logFile);
 			}
 		}

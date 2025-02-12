@@ -91,6 +91,8 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 	 */
 	ConfigDataEnvironmentContributors withProcessedImports(ConfigDataImporter importer,
 			ConfigDataActivationContext activationContext) {
+		// activationContext 为null：BEFORE_PROFILE_ACTIVATION
+		// 否则为AFTER_PROFILE_ACTIVATION
 		ImportPhase importPhase = ImportPhase.get(activationContext);
 		this.logger.trace(LogMessage.format("Processing imports for phase %s. %s", importPhase,
 				(activationContext != null) ? activationContext : "no activation context"));
@@ -113,6 +115,7 @@ class ConfigDataEnvironmentContributors implements Iterable<ConfigDataEnvironmen
 			ConfigDataLoaderContext loaderContext = new ContributorDataLoaderContext(this);
 			List<ConfigDataLocation> imports = contributor.getImports();
 			this.logger.trace(LogMessage.format("Processing imports %s", imports));
+			// 加载配置
 			Map<ConfigDataResolutionResult, ConfigData> imported = importer.resolveAndLoad(activationContext,
 					locationResolverContext, loaderContext, imports);
 			this.logger.trace(LogMessage.of(() -> getImportedMessage(imported.keySet())));

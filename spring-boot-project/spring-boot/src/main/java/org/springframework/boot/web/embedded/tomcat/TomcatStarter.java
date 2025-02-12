@@ -46,6 +46,7 @@ class TomcatStarter implements ServletContainerInitializer {
 		this.initializers = initializers;
 	}
 
+	// ServletContainerInitializer	Tomcat生命周期回调
 	@Override
 	public void onStartup(Set<Class<?>> classes, ServletContext servletContext) throws ServletException {
 		try {
