@@ -78,6 +78,7 @@ public class Profiles implements Iterable<String> {
 	 * @param additionalProfiles any additional active profiles
 	 */
 	Profiles(Environment environment, Binder binder, Collection<String> additionalProfiles) {
+		// 找spring.profiles.group
 		this.groups = binder.bind("spring.profiles.group", STRING_STRINGS_MAP).orElseGet(LinkedMultiValueMap::new);
 		this.activeProfiles = expandProfiles(getActivatedProfiles(environment, binder, additionalProfiles));
 		this.defaultProfiles = expandProfiles(getDefaultProfiles(environment, binder));

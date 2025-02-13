@@ -245,6 +245,7 @@ class ConfigDataEnvironment {
 		contributors = processWithoutProfiles(contributors, importer, activationContext);
 		activationContext = withProfiles(contributors, activationContext);
 		contributors = processWithProfiles(contributors, importer, activationContext);
+		// 应用到environment
 		applyToEnvironment(contributors, activationContext, importer.getLoadedLocations(),
 				importer.getOptionalLocations());
 	}
@@ -285,7 +286,9 @@ class ConfigDataEnvironment {
 				(contributor) -> !contributor.hasConfigDataOption(ConfigData.Option.IGNORE_PROFILES),
 				BinderOption.FAIL_ON_BIND_TO_INACTIVE_SOURCE);
 		try {
+			// 处理profiles
 			Set<String> additionalProfiles = new LinkedHashSet<>(this.additionalProfiles);
+			// 添加所有spring.profiles.include指定的
 			additionalProfiles.addAll(getIncludedProfiles(contributors, activationContext));
 			Profiles profiles = new Profiles(this.environment, binder, additionalProfiles);
 			return activationContext.withProfiles(profiles);
@@ -307,6 +310,7 @@ class ConfigDataEnvironment {
 			ConfigurationPropertySource source = contributor.getConfigurationPropertySource();
 			if (source != null && !contributor.hasConfigDataOption(ConfigData.Option.IGNORE_PROFILES)) {
 				Binder binder = new Binder(Collections.singleton(source), placeholdersResolver);
+				// 找spring.profiles.include值
 				binder.bind(Profiles.INCLUDE_PROFILES, STRING_LIST).ifBound((includes) -> {
 					if (!contributor.isActive(activationContext)) {
 						InactiveConfigDataAccessException.throwIfPropertyFound(contributor, Profiles.INCLUDE_PROFILES);
