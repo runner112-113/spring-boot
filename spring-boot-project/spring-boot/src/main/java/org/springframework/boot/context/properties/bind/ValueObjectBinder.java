@@ -46,8 +46,11 @@ import org.springframework.core.convert.ConversionException;
 import org.springframework.util.Assert;
 
 /**
+ * <p>
  * {@link DataObjectBinder} for immutable value objects.
+ *</p>
  *
+ * 构造器参数注入，不可变 一般不提供setter方法
  * @author Madhura Bhave
  * @author Stephane Nicoll
  * @author Phillip Webb

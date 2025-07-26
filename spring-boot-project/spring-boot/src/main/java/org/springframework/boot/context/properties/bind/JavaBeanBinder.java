@@ -41,7 +41,10 @@ import org.springframework.core.MethodParameter;
 import org.springframework.core.ResolvableType;
 
 /**
+ * <p>
  * {@link DataObjectBinder} for mutable Java Beans.
+ * </p>
+ * 无参构造器 + setter，可变
  *
  * @author Phillip Webb
  * @author Madhura Bhave

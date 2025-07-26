@@ -26,11 +26,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 /**
+ * <p>
  * Enable support for {@link ConfigurationProperties @ConfigurationProperties} annotated
  * beans. {@code @ConfigurationProperties} beans can be registered in the standard way
  * (for example using {@link Bean @Bean} methods) or, for convenience, can be specified
  * directly on this annotation.
+ *</p>
+ * 当某个bean扫描不到的时候需要通过{@link EnableConfigurationProperties}来导入 然后才可以绑定
  *
+ * @see <a href="https://docs.spring.io/spring-boot/docs/2.7.18/reference/html/features.html#features.external-config.typesafe-configuration-properties.enabling-annotated-types">springboot 官方文档</a>
  * @author Dave Syer
  * @since 1.0.0
  */

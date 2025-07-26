@@ -64,6 +64,7 @@ public class Binder {
 
 	private final BindHandler defaultBindHandler;
 
+	// 对象绑定器 分为JavaBeanBinder、ValueObjectBinder
 	private final List<DataObjectBinder> dataObjectBinders;
 
 	/**
@@ -394,6 +395,7 @@ public class Binder {
 		if (property == null && context.depth != 0 && containsNoDescendantOf(context.getSources(), name)) {
 			return null;
 		}
+		// 判断是否是集合类型以及Map类型、数组类型
 		AggregateBinder<?> aggregateBinder = getAggregateBinder(target, context);
 		if (aggregateBinder != null) {
 			return bindAggregate(name, target, handler, context, aggregateBinder);
